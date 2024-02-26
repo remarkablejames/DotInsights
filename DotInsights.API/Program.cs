@@ -1,3 +1,5 @@
+using DotInsights.API.Data;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +10,13 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddControllers();
+
+// Add DbContext to the container
+string connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new Exception("Connection string not found");
+builder.Services.AddDbContext<BlogDbContext>(options =>
+{
+    options.UseNpgsql(connectionString);
+});
 
 // Add CORS policy
 builder.Services.AddCors(options =>
