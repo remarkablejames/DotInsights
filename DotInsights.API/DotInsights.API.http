@@ -1,0 +1,6 @@
+@DotInsights.API_HostAddress = http://localhost:5270
+
+GET {{DotInsights.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
