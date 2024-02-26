@@ -1,3 +1,4 @@
+using DotInsights.API.config;
 using DotInsights.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -33,6 +34,9 @@ builder.Host.UseSerilog((ctx, lc) =>
 {
     lc.WriteTo.Console().ReadFrom.Configuration(ctx.Configuration);
 });
+
+// Add AutoMapper to the container
+builder.Services.AddAutoMapper(typeof(AutoMapperConfig));
 
 var app = builder.Build();
 
