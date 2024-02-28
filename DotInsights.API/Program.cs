@@ -1,5 +1,7 @@
 using DotInsights.API.config;
+using DotInsights.API.Contracts;
 using DotInsights.API.Data;
+using DotInsights.API.Repository;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -37,6 +39,10 @@ builder.Host.UseSerilog((ctx, lc) =>
 
 // Add AutoMapper to the container
 builder.Services.AddAutoMapper(typeof(AutoMapperConfig));
+
+// Add Repositories to the container
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddScoped<IPostsRepository, PostsRepository>();
 
 var app = builder.Build();
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using DotInsights.API.Contracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,13 +17,13 @@ namespace DotInsights.API.Controllers
     [ApiController]
     public class Posts : ControllerBase
     {
-        private readonly BlogDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IPostsRepository _postsRepository;
 
-        public Posts(BlogDbContext context, IMapper mapper)
+        public Posts( IMapper mapper,IPostsRepository postsRepository)
         {
-            _context = context;
             _mapper = mapper;
+            _postsRepository = postsRepository;
         }
         
 
@@ -30,7 +31,7 @@ namespace DotInsights.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GetPostDto>>> GetPosts()
         {
-            var posts = await _context.Posts.ToListAsync();
+            var posts = await _postsRepository.GetAllAsync();
             return Ok(_mapper.Map<List<GetPostDto>>(posts));
         }
 
@@ -38,7 +39,7 @@ namespace DotInsights.API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<GetPostDetailsDto>> GetPost(int id)
         {
-            var post = await _context.Posts.Include(p => p.Comments).FirstOrDefaultAsync(p => p.Id == id);
+            var post = await _postsRepository.GetAsync(id);
 
             if (post == null)
             {
@@ -60,15 +61,14 @@ namespace DotInsights.API.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(post).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _postsRepository.UpdateAsync(post);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!PostExists(id))
+                if (! await PostExists(id))
                 {
                     return NotFound();
                 }
@@ -94,8 +94,7 @@ namespace DotInsights.API.Controllers
             // };
             
             var post = _mapper.Map<Post>(newPostData);
-            _context.Posts.Add(post);
-            await _context.SaveChangesAsync();
+            await _postsRepository.AddAsync(post);
 
             return CreatedAtAction("GetPost", new { id = post.Id }, post);
         }
@@ -104,21 +103,20 @@ namespace DotInsights.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePost(int id)
         {
-            var post = await _context.Posts.FindAsync(id);
+            var post = await _postsRepository.GetAsync(id);
             if (post == null)
             {
                 return NotFound();
             }
 
-            _context.Posts.Remove(post);
-            await _context.SaveChangesAsync();
+            await _postsRepository.DeleteAsync(id);
 
             return NoContent();
         }
 
-        private bool PostExists(int id)
+        private async Task<bool> PostExists(int id)
         {
-            return _context.Posts.Any(e => e.Id == id);
+            return await _postsRepository.Exists(id);
         }
     }
 }
