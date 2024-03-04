@@ -3,6 +3,7 @@ using System;
 using DotInsights.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DotInsights.API.Migrations
 {
     [DbContext(typeof(BlogDbContext))]
-    partial class BlogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240304044709_Added Identity Tables")]
+    partial class AddedIdentityTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -117,22 +120,6 @@ namespace DotInsights.API.Migrations
                     b.HasIndex("PostId");
 
                     b.ToTable("Comments");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Content = "This is the first comment",
-                            Created = new DateTime(2024, 3, 4, 4, 59, 32, 768, DateTimeKind.Utc).AddTicks(5450),
-                            PostId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Content = "This is the second comment",
-                            Created = new DateTime(2024, 3, 4, 4, 59, 32, 768, DateTimeKind.Utc).AddTicks(5450),
-                            PostId = 1
-                        });
                 });
 
             modelBuilder.Entity("DotInsights.API.Models.Post", b =>
@@ -164,7 +151,7 @@ namespace DotInsights.API.Migrations
                         {
                             Id = 1,
                             Content = "This is the first post",
-                            Created = new DateTime(2024, 3, 4, 4, 59, 32, 768, DateTimeKind.Utc).AddTicks(5380),
+                            Created = new DateTime(2024, 3, 4, 4, 47, 9, 443, DateTimeKind.Utc).AddTicks(8620),
                             Title = "First Post"
                         });
                 });
@@ -193,20 +180,6 @@ namespace DotInsights.API.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "03ccdaaf-c62c-4405-a824-6c93b7d8f653",
-                            Name = "User",
-                            NormalizedName = "USER"
-                        },
-                        new
-                        {
-                            Id = "c1b39235-bfa2-44c0-8276-2ed82290aae3",
-                            Name = "Administrator",
-                            NormalizedName = "ADMIN"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

@@ -1,7 +1,9 @@
 using DotInsights.API.config;
 using DotInsights.API.Contracts;
 using DotInsights.API.Data;
+using DotInsights.API.Models;
 using DotInsights.API.Repository;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -20,6 +22,9 @@ builder.Services.AddDbContext<BlogDbContext>(options =>
 {
     options.UseNpgsql(connectionString);
 });
+
+// add IdentityCore to the container
+builder.Services.AddIdentityCore<ApiUser>().AddRoles<IdentityRole>().AddEntityFrameworkStores<BlogDbContext>();
 
 // Add CORS policy
 builder.Services.AddCors(options =>
@@ -43,6 +48,8 @@ builder.Services.AddAutoMapper(typeof(AutoMapperConfig));
 // Add Repositories to the container
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IPostsRepository, PostsRepository>();
+builder.Services.AddScoped<ICommentsRepository, CommentsRepository>();
+builder.Services.AddScoped<IAuthManager, AuthManager>();
 
 var app = builder.Build();
 

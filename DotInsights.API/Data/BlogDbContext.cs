@@ -1,9 +1,12 @@
+using DotInsights.API.Data.configurations;
 using DotInsights.API.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.General;
 
 namespace DotInsights.API.Data;
 
-public class BlogDbContext: DbContext
+public class BlogDbContext: IdentityDbContext<ApiUser>
 {
     
     public BlogDbContext(DbContextOptions<BlogDbContext> options) : base(options)
@@ -15,15 +18,10 @@ public class BlogDbContext: DbContext
     
 protected override void OnModelCreating(ModelBuilder modelBuilder)
 {
-    modelBuilder.Entity<Post>().HasData(
-        
-        new  { Id = 1, Title = "First Post", Content = "This is the first post", Created = DateTime.UtcNow }
-    );
-    
-    modelBuilder.Entity<Comment>().HasData(
-        new { Id = 1, Content = "This is the first comment", Created = DateTime.UtcNow, PostId = 1 },
-        new { Id = 2, Content = "This is the second comment", Created = DateTime.UtcNow, PostId = 1 }
-    );
+    base.OnModelCreating(modelBuilder);
+    modelBuilder.ApplyConfiguration(new RoleConfiguration());
+    modelBuilder.ApplyConfiguration(new PostConfiguration());
+    modelBuilder.ApplyConfiguration(new CommentConfiguration());
 }
     
     
