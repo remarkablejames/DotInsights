@@ -39,5 +39,24 @@ namespace DotInsights.API.Controllers
 
             return Ok();
         }
+        
+        [HttpPost]
+        [Route("login")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Login([FromBody] LoginUserDto loginUserDto)
+        {
+            var authResponse = await _authManager.Login(loginUserDto);
+
+
+            if (authResponse == null)
+            {
+                return Unauthorized();
+            }
+            
+
+            return Ok(authResponse);
+        }
     }
 }

@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using DotInsights.API.Data;
 using DotInsights.API.Models;
 using DotInsights.API.Models.DTOs.Post;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DotInsights.API.Controllers
 {
@@ -54,6 +55,7 @@ namespace DotInsights.API.Controllers
         // PUT: api/Posts/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutPost(int id, Post post)
         {
             if (id != post.Id)
@@ -84,6 +86,7 @@ namespace DotInsights.API.Controllers
         // POST: api/Posts
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Post>> PostPost(CreatePostDto newPostData)
         {
             // var post = new Post
@@ -101,6 +104,7 @@ namespace DotInsights.API.Controllers
 
         // DELETE: api/Posts/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> DeletePost(int id)
         {
             var post = await _postsRepository.GetAsync(id);
